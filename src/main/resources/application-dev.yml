@@ -1,0 +1,28 @@
+spring:
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5432/bank_rest}
+    username: ${SPRING_DATASOURCE_USERNAME:postgres}
+    password: ${SPRING_DATASOURCE_PASSWORD:root}
+  liquibase:
+    change-log: classpath:/db/migration/master.yml
+    drop-first: true
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: validate
+
+server:
+  port: 8080
+
+jwt:
+  key: secret_key_secret_key_secret_key_32b
+
+crypto:
+  cardNumberKey: card_secret_key
+
+logging:
+  level:
+    com.example.bankcards.exception: DEBUG
+    org.hibernate.SQL: DEBUG
+    org.hibernate.orm.jdbc.bind: TRACE

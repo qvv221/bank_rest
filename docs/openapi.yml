@@ -1,0 +1,603 @@
+---
+openapi: 3.0.3
+info:
+  title: bank_rest
+  version: 1.0-SNAPSHOT
+servers:
+  - url: ""
+tags:
+  - name: AdminCardController
+    description: Управление картами администратором
+  - name: AdminUserController
+    description: Управление пользователями
+  - name: UserCardController
+    description: Операции пользователя со своими картами
+  - name: AuthController
+  - name: TransferController
+paths:
+  /api/admin/cards:
+    get:
+      tags:
+        - AdminCardController
+      operationId: AdminCardController.getAll
+      description: Получить карты пользователей
+      parameters:
+        - name: page
+          description: Номер страницы
+          in: query
+          required: false
+          schema:
+            type: integer
+            format: int32
+        - name: size
+          description: Размер страницы
+          in: query
+          required: false
+          schema:
+            type: integer
+            format: int32
+        - name: sort
+          description: "Сортировка в формате: поле, (asc|desc)"
+          in: query
+          required: false
+          schema: {}
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  totalPages:
+                    type: integer
+                    format: int32
+                  totalElements:
+                    type: integer
+                    format: int64
+                  pageable:
+                    $ref: '#/components/schemas/Pageable'
+                  numberOfElements:
+                    type: integer
+                    format: int32
+                  size:
+                    type: integer
+                    format: int32
+                  content:
+                    type: array
+                    items:
+                      description: Карта
+                      $ref: '#/components/schemas/CardDto'
+                  number:
+                    type: integer
+                    format: int32
+                  sort:
+                    $ref: '#/components/schemas/Sort'
+                  first:
+                    type: boolean
+                  last:
+                    type: boolean
+                  empty:
+                    type: boolean
+      x-operation-name: getAll
+    post:
+      tags:
+        - AdminCardController
+      operationId: AdminCardController.create
+      description: Создать карту для пользователя
+      requestBody:
+        content:
+          application/json:
+            schema:
+              description: Запрос на создание карты
+              $ref: '#/components/schemas/CreateCardRequest'
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                description: Карта
+                $ref: '#/components/schemas/CardDto'
+      x-operation-name: create
+  /api/admin/cards/{id}:
+    get:
+      tags:
+        - AdminCardController
+      operationId: AdminCardController.getById
+      description: Получить карту по идентификатору
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                description: Карта
+                $ref: '#/components/schemas/CardDto'
+      x-operation-name: getById
+    delete:
+      tags:
+        - AdminCardController
+      operationId: AdminCardController.deleteById
+      description: Удалить карту по идентификатору
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        200:
+          description: successful operation
+      x-operation-name: deleteById
+  /api/admin/cards/{id}/activate:
+    put:
+      tags:
+        - AdminCardController
+      operationId: AdminCardController.activate
+      description: Активировать карту по идентификатору
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        200:
+          description: successful operation
+      x-operation-name: activate
+  /api/admin/cards/{id}/block:
+    put:
+      tags:
+        - AdminCardController
+      operationId: AdminCardController.block
+      description: Заблокировать карту по идентификатору
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        200:
+          description: successful operation
+      x-operation-name: block
+  /api/admin/users:
+    get:
+      tags:
+        - AdminUserController
+      operationId: AdminUserController.list
+      description: Получить пользователей
+      parameters:
+        - name: page
+          description: Номер страницы
+          in: query
+          required: false
+          schema:
+            type: integer
+            format: int32
+        - name: size
+          description: Размер страницы
+          in: query
+          required: false
+          schema:
+            type: integer
+            format: int32
+        - name: sort
+          description: "Сортировка в формате: поле, (asc|desc)"
+          in: query
+          required: false
+          schema: {}
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  totalPages:
+                    type: integer
+                    format: int32
+                  totalElements:
+                    type: integer
+                    format: int64
+                  pageable:
+                    $ref: '#/components/schemas/Pageable'
+                  numberOfElements:
+                    type: integer
+                    format: int32
+                  size:
+                    type: integer
+                    format: int32
+                  content:
+                    type: array
+                    items:
+                      description: Пользователь
+                      $ref: '#/components/schemas/UserDto'
+                  number:
+                    type: integer
+                    format: int32
+                  sort:
+                    $ref: '#/components/schemas/Sort'
+                  first:
+                    type: boolean
+                  last:
+                    type: boolean
+                  empty:
+                    type: boolean
+      x-operation-name: list
+    post:
+      tags:
+        - AdminUserController
+      operationId: AdminUserController.create
+      description: Создать нового пользователя
+      requestBody:
+        content:
+          application/json:
+            schema:
+              description: Создание и обновление пользователя
+              $ref: '#/components/schemas/UserRequest'
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                description: Пользователь
+                $ref: '#/components/schemas/UserDto'
+      x-operation-name: create
+  /api/admin/users/{id}:
+    get:
+      tags:
+        - AdminUserController
+      operationId: AdminUserController.getById
+      description: Получить пользователя по идентификатору
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                description: Пользователь
+                $ref: '#/components/schemas/UserDto'
+      x-operation-name: getById
+    put:
+      tags:
+        - AdminUserController
+      operationId: AdminUserController.update
+      description: Обновить параметры пользователя
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        content:
+          application/json:
+            schema:
+              description: Создание и обновление пользователя
+              $ref: '#/components/schemas/UserRequest'
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                description: Пользователь
+                $ref: '#/components/schemas/UserDto'
+      x-operation-name: update
+    delete:
+      tags:
+        - AdminUserController
+      operationId: AdminUserController.delete
+      description: Удалить пользователя
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        200:
+          description: successful operation
+      x-operation-name: delete
+  /auth/sign-in:
+    post:
+      tags:
+        - AuthController
+      operationId: AuthController.signIn
+      description: Получить токен для пользователя
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SignInRequest'
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                description: Ответ c токеном доступа
+                $ref: '#/components/schemas/JwtAuthenticationResponse'
+      x-operation-name: signIn
+  /api/transfers:
+    post:
+      tags:
+        - TransferController
+      operationId: TransferController.transfer
+      description: Перевод между своими картами
+      requestBody:
+        content:
+          application/json:
+            schema:
+              description: Запрос на перевод между своими картами
+              $ref: '#/components/schemas/TransferRequest'
+      responses:
+        200:
+          description: successful operation
+      x-operation-name: transfer
+  /api/user/cards:
+    get:
+      tags:
+        - UserCardController
+      operationId: UserCardController.getAll
+      description: Получить все карты пользователя
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  description: Карта
+                  $ref: '#/components/schemas/CardDto'
+      x-operation-name: getAll
+  /api/user/cards/{id}:
+    get:
+      tags:
+        - UserCardController
+      operationId: UserCardController.getById
+      description: Получить карту пользователя
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                description: Карта
+                $ref: '#/components/schemas/CardDto'
+      x-operation-name: getById
+  /api/user/cards/{id}/balance:
+    get:
+      tags:
+        - UserCardController
+      operationId: UserCardController.getBalanceById
+      description: Получить баланс пользователя
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: integer
+                format: int64
+      x-operation-name: getBalanceById
+  /api/user/cards/{id}/block:
+    post:
+      tags:
+        - UserCardController
+      operationId: UserCardController.requestBlockById
+      description: Заблокировать карту пользователя
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        200:
+          description: successful operation
+      x-operation-name: requestBlockById
+components:
+  schemas:
+    CardDto:
+      description: Карта
+      type: object
+      properties:
+        id:
+          description: Идентификатор карты
+          type: integer
+          format: int64
+        number:
+          description: Номер карты
+          type: string
+        owner:
+          description: Владелец
+          type: string
+        validityPeriod:
+          description: Срок действия
+          type: string
+        status:
+          description: Статус
+          $ref: '#/components/schemas/Status'
+        balance:
+          description: Баланс
+          type: integer
+          format: int64
+    CreateCardRequest:
+      description: Запрос на создание карты
+      required:
+        - username
+        - number
+        - validityPeriod
+        - balance
+      type: object
+      properties:
+        username:
+          description: Username владельца (кому создать карту)
+          type: string
+          example: user1
+        number:
+          description: Полный номер карты
+          type: string
+        validityPeriod:
+          description: Срок действия (MM/YY)
+          type: string
+          example: 12/26
+        balance:
+          description: Баланс
+          type: integer
+          format: int64
+    JwtAuthenticationResponse:
+      description: Ответ c токеном доступа
+      type: object
+      properties:
+        token:
+          description: Токен доступа
+          type: string
+    Pageable:
+      type: object
+      properties:
+        pageNumber:
+          type: integer
+          format: int32
+        pageSize:
+          type: integer
+          format: int32
+        paged:
+          type: boolean
+        unpaged:
+          type: boolean
+        offset:
+          type: integer
+          format: int64
+        sort:
+          $ref: '#/components/schemas/Sort'
+    Role:
+      type: string
+      enum:
+        - ADMIN
+        - USER
+    SignInRequest:
+      required:
+        - username
+        - password
+      type: object
+      properties:
+        username:
+          description: Имя пользователя
+          type: string
+        password:
+          description: Пароль
+          type: string
+    Sort:
+      type: object
+      properties:
+        unsorted:
+          type: boolean
+        sorted:
+          type: boolean
+        empty:
+          type: boolean
+    Status:
+      type: string
+      enum:
+        - ACTIVE
+        - BLOCKED
+        - EXPIRED
+    TransferRequest:
+      description: Запрос на перевод между своими картами
+      required:
+        - fromCardId
+        - toCardId
+        - amount
+      type: object
+      properties:
+        fromCardId:
+          description: ID карты-источника
+          type: integer
+          format: int64
+        toCardId:
+          description: ID карты-получателя
+          type: integer
+          format: int64
+        amount:
+          description: Сумма перевода
+          type: integer
+          format: int64
+    UserDto:
+      description: Пользователь
+      type: object
+      properties:
+        id:
+          description: Идентификатор
+          type: integer
+          format: int64
+        username:
+          description: Имя пользователя
+          type: string
+        email:
+          description: Email
+          type: string
+        role:
+          description: Роль
+          $ref: '#/components/schemas/Role'
+    UserRequest:
+      description: Создание и обновление пользователя
+      required:
+        - username
+        - email
+        - password
+        - role
+      type: object
+      properties:
+        username:
+          description: Имя пользователя
+          type: string
+        email:
+          description: Email
+          type: string
+        password:
+          description: Пароль
+          type: string
+        role:
+          description: Роль
+          $ref: '#/components/schemas/Role'
